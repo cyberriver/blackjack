@@ -1,8 +1,8 @@
 class Card
-  attr_reader :suit, :nomimal_score, :value
+  attr_reader :suit, :nominal, :value
   def initialize(suit,nominal,value)
     @suit=suit #масть
-    @nomimal_score=nominal #номинал очков за карту
+    @nominal=nominal.to_i #номинал очков за карту
     @value = value #значение
   end
 end

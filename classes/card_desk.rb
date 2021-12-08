@@ -3,7 +3,8 @@ class CardsDesk
   attr_reader :cards
 
   SUIT =["\u2662","\u2664","\u2665","\u2667"]
-  HIGH_CARDS = [:A,:K,:Q,:J]
+  ACE =:A
+  HIGH_CARDS = [:K,:Q,:J]
   LOW_CARDS = [2,3,4,5,6,7,8,9,10]
   def initialize
     @cards=[]
@@ -18,6 +19,7 @@ class CardsDesk
 
   private
   def create_suit(suit)
+    @cards.push(Card.new(suit,11,ACE))
     HIGH_CARDS.each {|value| @cards.push(Card.new(suit,10,value))}
     LOW_CARDS.each {|value| @cards.push(Card.new(suit,value,value))}
   end

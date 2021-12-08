@@ -10,15 +10,18 @@ module CardsOperations
   end
   module InstanceMethods
     def start(desk)
-      #выдать 2 случайные карты из колоды.
       random_select(desk.cards,2)
-    #  puts "#{@user_name} выдана карта #{@cards.last.suit} #{@cards.last.value}"
-    #  random_select(desk.cards,1)
-    #  puts "#{@user_name} выдана карта #{@cards.last.suit} #{@cards.last.value}"
     end
 
-    def show_cards
+    def get_card(desk)
+      random_select(desk.cards,1)
+    end
+
+    def show_cards(par=:close)
       if @user_type ==:gamer
+        @cards.each {|card| print " #{card.suit} #{card.value} "}
+        puts "<-------карты #{@user_name}"
+      elsif par ==:open
         @cards.each {|card| print " #{card.suit} #{card.value} "}
         puts "<-------карты #{@user_name}"
       else
@@ -28,12 +31,25 @@ module CardsOperations
     end
 
     def count_score
-      score = 0
+      @score = 0
+      score_calc=0
       @cards.each do |card|
-        score +=card.nomimal_score
+        score_calc+=card.nominal
+        if card.suit =="A" && score_calc >21
+          @score+=1
+        else
+          @score = score_calc
+        end
       end
-      puts "Очки #{@user_name} - #{score}"
-    #  end
+      return @score
+    end
+
+    def check_cards_limit
+      if @cards.length==3
+        return true
+      else
+        return false
+      end
     end
 
     private

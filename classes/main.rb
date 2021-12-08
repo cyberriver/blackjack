@@ -1,39 +1,51 @@
 require_relative 'card_desk'
 require_relative 'gamer'
 require_relative 'dealer'
+require_relative './modules/game_methods'
 
 class Main
+  include GameMethods::InstanceMethods
   START = "============начало игры============"
   BET = "============Ставка================="
-  PLAYER_MOVE ="============Ход Игрока================="
-  DEALER_MOVE ="============Ход Дилера================="
-  MENU ="
-  1 - Пропустить
-  2 - Добавить карту (если не более 2х карт)
-  3 - Открыть карты
+  MENU_FINAL ="
+  Игра окончена.
+  Хотите сыграть снова?
+  1 - Да
+  2 - Нет (выйти)
   "
+
+
   def initialize
     print "введите имя игрокa "
     @player = Gamer.new(gets.chomp)
-    @dealer = Dealer.new()
-    @desk = CardsDesk.new()
+    @dealer = Dealer.new
+    @desk = CardsDesk.new
     @moves=[]
+    @end_game = 0
     puts "Игрок #{@player.user_name} вступил в игру"
     puts "карт в колоде #{@desk.desk_count}"
-
   end
 
   def start_game
     puts START
+    @end_game = 0
+    @player.cards=[]
+    @player.score = 0
     @player.start(@desk)
-    @dealer.start(@desk)
     @player.show_cards
+    @dealer.cards=[]
+    @dealer.score = 0
+    @dealer.start(@desk)
     @dealer.show_cards
     puts "карт в колоде #{@desk.desk_count}"
     puts "На счету:#{@player.user_name}:#{@player.account} #{@dealer.user_name}: #{@dealer.account}"
     @player.count_score
+    @dealer.count_score
+    puts "Очки #{@player.user_name} - #{@player.score}"
     @bank=0
-    @moves.push(:p)
+    @moves.push(:player)
+    self.player_make_bet
+    self.choose_move
   end
 
   def player_make_bet
@@ -46,32 +58,43 @@ class Main
     puts "На счету:#{@player.user_name}:#{@player.account} #{@dealer.user_name}: #{@dealer.account}"
   end
 
-  def player_move
-    puts PLAYER_MOVE
-    puts MENU
+  def choose_move
+    loop do
+      if @moves.last ==:player
+        then self.player_move
+      else self.dealer_move
+      end
+      break if [:player,:equal,:dealer].include?(@end_game)
+    end
+    self.display_victory
+    self.choose_game
+  end
+
+  def choose_game
+    puts MENU_FINAL
     loop do
       case gets.chomp.to_i
-      when 1 then self.wait
-      when 2 then self.take_card
-      when 3 then self.show_cards
-      else raise "вы ввели что-то не то"
+      when 1 then self.start_game
+      when 2 then break
+      else puts "Вы ввели некорректную команду choose_game"
       end
-    rescue StandardError =>err
-      puts err.inspect
-      retry
     end
   end
 
   private
-  def wait
-    puts "wait"
+
+  def wait(name,move)
+    puts "Пропуск хода #{name}"
+    @moves.push(move)
   end
 
-  def take_card
-    puts "take_card"
-  end
-
-  def show_cards
-    puts "show_cards"
+  def display_victory
+    if @end_game==:player
+      puts "Игрок #{@player.user_name} победил"
+    elsif @end_game==:equal
+      puts "Ничья"
+    else
+      puts "Дилер #{@dealer.user_name} победил"
+    end
   end
 end
