@@ -32,7 +32,6 @@ class Main
     @moves = []
     @end_game = 0
     puts "Игрок #{@player.user_name} вступил в игру"
-    puts "карт в колоде #{@desk.desk_count}"
   end
 
   def start_game
