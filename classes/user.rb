@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './modules/get_cards'
 
 class UserGame
@@ -7,17 +9,16 @@ class UserGame
 
   def initialize(user_name)
     @user_type = :meta
-    @account = 100 #USD
+    @account = 100 # USD
     @user_name = user_name.to_s
     @cards = []
     @score = 0
-    @bet=0
+    @bet = 0
   end
 
   def make_a_bet
-    @bet=10
-    @account -=@bet
-    raise "у #{@user_name} закончились деньги" unless @account >=0
+    @bet = 10
+    @account -= @bet
+    raise "у #{@user_name} закончились деньги" unless @account >= 0
   end
-
 end
