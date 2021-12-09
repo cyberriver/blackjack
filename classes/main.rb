@@ -4,19 +4,27 @@ require_relative 'dealer'
 require_relative './modules/game_methods'
 
 class Main
+
   include GameMethods::InstanceMethods
-  START = "============начало игры============"
-  BET = "============Ставка================="
+  START = "
+  ============начало игры============
+  "
+  BET = "
+  ============Ставка=================
+  "
   MENU_FINAL ="
   Игра окончена.
   Хотите сыграть снова?
   1 - Да
   2 - Нет (выйти)
   "
-
+  END_GAME = "
+  =============ИТОГИ ПАРТИИ ==========
+  "
 
   def initialize
-    print "введите имя игрокa "
+    puts "Вас приветствует игра БлекДжек #{$SUIT}"
+    print"пжл-та введите имя игрокa "
     @player = Gamer.new(gets.chomp)
     @dealer = Dealer.new
     @desk = CardsDesk.new
@@ -28,23 +36,11 @@ class Main
 
   def start_game
     puts START
-    @end_game = 0
-    @player.cards=[]
-    @player.score = 0
-    @player.start(@desk)
-    @player.show_cards
-    @dealer.cards=[]
-    @dealer.score = 0
-    @dealer.start(@desk)
-    @dealer.show_cards
-    puts "карт в колоде #{@desk.desk_count}"
+    self.reset
     puts "На счету:#{@player.user_name}:#{@player.account} #{@dealer.user_name}: #{@dealer.account}"
-    @player.count_score
-    @dealer.count_score
     puts "Очки #{@player.user_name} - #{@player.score}"
-    @bank=0
     @moves.push(:player)
-    self.player_make_bet
+    self.player_make_bet if check_dealer
     self.choose_move
   end
 
@@ -52,10 +48,12 @@ class Main
     puts BET
     @player.make_a_bet
     @dealer.make_a_bet
-    @bank +=(@player.bet+@dealer.bet)
+    @bank += (@player.bet+@dealer.bet)
     puts "Ставки сделаны=>#{@player.user_name}:#{@player.bet} #{@dealer.user_name}: #{@dealer.bet}"
     puts "В банке #{@bank}"
     puts "На счету:#{@player.user_name}:#{@player.account} #{@dealer.user_name}: #{@dealer.account}"
+  rescue StandardError =>err
+    err.inspect
   end
 
   def choose_move
@@ -72,13 +70,14 @@ class Main
 
   def choose_game
     puts MENU_FINAL
-    loop do
-      case gets.chomp.to_i
+    case gets.chomp.to_i
       when 1 then self.start_game
-      when 2 then break
-      else puts "Вы ввели некорректную команду choose_game"
+      when 2 then exit
+      else raise "Вы ввели некорректную команду choose_game"
       end
-    end
+  rescue StandardError =>err
+    err.inspect
+    retry
   end
 
   private
@@ -88,13 +87,44 @@ class Main
     @moves.push(move)
   end
 
+  def reset
+    @end_game = 0
+    @bank = 0
+    @player.cards = []
+    @player.score = 0
+    @player.start(@desk)
+    @player.show_cards
+    @dealer.cards = []
+    @dealer.score = 0
+    @dealer.start(@desk)
+    @dealer.show_cards
+    @player.count_score
+    @dealer.count_score
+  end
+
   def display_victory
+    puts END_GAME
+    puts "Очки дилера:#{@dealer.score}, Очки игрока:#{@player.score} "
     if @end_game==:player
-      puts "Игрок #{@player.user_name} победил"
+      puts "\u2606 \u2606 Игрок #{@player.user_name} победил \u2606 \u2606"
     elsif @end_game==:equal
       puts "Ничья"
     else
-      puts "Дилер #{@dealer.user_name} победил"
+      puts "¯ \ _ (ツ) _ / ¯ Дилер #{@dealer.user_name} победил"
+    end
+    money_transfer(@end_game)
+    puts "На счету:#{@player.user_name}:#{@player.account} #{@dealer.user_name}: #{@dealer.account}"
+  end
+
+  def check_dealer
+    if @dealer.account >0
+      return true
+    else
+      false
+      puts "У диллера закончились деньги :("
+      exit
     end
   end
+
+
 end

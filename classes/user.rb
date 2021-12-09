@@ -17,7 +17,7 @@ class UserGame
   def make_a_bet
     @bet=10
     @account -=@bet
-    raise "у #{@user_name} закончились деньги" unless @account >0
+    raise "у #{@user_name} закончились деньги" unless @account >=0
   end
 
 end

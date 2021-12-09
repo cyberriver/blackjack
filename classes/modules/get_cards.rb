@@ -21,7 +21,7 @@ module CardsOperations
       if @user_type ==:gamer
         @cards.each {|card| print " #{card.suit} #{card.value} "}
         puts "<-------карты #{@user_name}"
-      elsif par ==:open
+      elsif par ==:open && @user_type ==:dealer
         @cards.each {|card| print " #{card.suit} #{card.value} "}
         puts "<-------карты #{@user_name}"
       else
@@ -32,15 +32,23 @@ module CardsOperations
 
     def count_score
       @score = 0
-      score_calc=0
+      ace = false
       @cards.each do |card|
-        score_calc+=card.nominal
-        if card.suit =="A" && score_calc >21
-          @score+=1
+        if card.suit =="A"
+          @score =score
+          ace = true
         else
-          @score = score_calc
+          @score += card.nominal          
         end
+        ace_points_calc(ace) if ace
+        #score_calc+=card.nominal
+        #if card.suit =="A" && score_calc >21
+        #  @score+=1
+        #else
+        #  @score = score_calc
+        #end
       end
+
       return @score
     end
 
@@ -53,6 +61,14 @@ module CardsOperations
     end
 
     private
+    def ace_points_calc(ace)
+      check = @score+11
+      if ace && check >21
+        @score+=1
+      else
+        @score+=11
+      end
+    end
 
     def random_select(cards, n)
       n.times do
