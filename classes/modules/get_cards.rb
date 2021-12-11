@@ -18,17 +18,6 @@ module CardsOperations
       random_select(desk.cards, 1)
     end
 
-    def show_cards(par = :close)
-      if @user_type == :gamer
-        @cards.each { |card| print " #{card.suit} #{card.value} " }
-      elsif par == :open && @user_type == :dealer
-        @cards.each { |card| print " #{card.suit} #{card.value} " }
-      else
-        @cards.each { |_card| print " |\u2606 | " }
-      end
-      puts "<-------карты #{@user_name}"
-    end
-
     def count_score
       @score = 0
       ace = false
@@ -41,10 +30,6 @@ module CardsOperations
         end
         ace_points_calc(ace) if ace
       end
-    end
-
-    def check_cards_limit
-      @cards.length == 3
     end
 
     private
@@ -61,8 +46,9 @@ module CardsOperations
     def random_select(cards, num)
       num.times do
         key = rand(cards.length)
-        @cards << cards[rand(cards.length)]
+        @cards << cards[key]
         cards.delete_at(key)
+
       end
     end
   end

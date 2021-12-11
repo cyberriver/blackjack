@@ -4,19 +4,18 @@ require_relative 'card'
 class CardsDesk
   attr_reader :cards
 
-  $SUIT = ["\u2662", "\u2664", "\u2665", "\u2667"]
+  SUIT = ["\u2662", "\u2664", "\u2665", "\u2667"]
   ACE = :A
   HIGH_CARDS = %i[K Q J].freeze
   LOW_CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10].freeze
   def initialize
     @cards = []
-    $SUIT.each { |suit| create_suit(suit) }
+    SUIT.each { |suit| create_suit(suit) }
   end
 
   def desk_count
     i = 0
     @cards.each { |_value| i += 1 }
-    puts "карт в колоде: #{i}"
   end
 
   private
