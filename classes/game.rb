@@ -8,8 +8,9 @@ require_relative './modules/game_methods'
 class Game
   attr_accessor :player, :dealer, :desk, :moves, :end_game, :bank
   attr_reader :victory
+
   include GameMethods::InstanceMethods
-  def initialize( name = 'Player')
+  def initialize(name = 'Player')
     @player = Gamer.new(name)
     @dealer = Dealer.new
     @desk = CardsDesk.new
@@ -23,27 +24,27 @@ class Game
   end
 
   def game_bet
-    if self.check_dealer
-     @player.make_a_bet
-     @dealer.make_a_bet
-     @bank = @player.bet + @dealer.bet
-   else
-     raise "У дилера закончились деньги. Вы победили"
-   end
+    if check_dealer
+      @player.make_a_bet
+      @dealer.make_a_bet
+      @bank = @player.bet + @dealer.bet
+    else
+      raise 'У дилера закончились деньги. Вы победили'
+    end
   end
 
   def check_endgame
-    if @player.cards.length == 3 && @dealer.cards.length==3
+    if @player.cards.length == 3 && @dealer.cards.length == 3
       @end_game = true
-    elsif @player.cards.length == 3 && @dealer.cards.length<3 && @moves.include?(:dealer)
+    elsif @player.cards.length == 3 && @dealer.cards.length < 3 && @moves.include?(:dealer)
       @end_game = false
     end
   end
 
   def make_move(option)
-    self.send("#{@moves.last.to_s}_move",option) if @end_game
-    self.reveal_cards if @end_game
-    self.money_transfer(@victory) if @end_game
+    send("#{@moves.last}_move", option) if @end_game
+    reveal_cards if @end_game
+    money_transfer(@victory) if @end_game
   end
 
   private
@@ -55,7 +56,7 @@ class Game
 
   def reset
     @victory = 0
-    @end_game=0
+    @end_game = 0
     @moves = []
     @moves.push(:player)
     @bank = 0
@@ -74,7 +75,7 @@ class Game
       true
     else
       return false
-      @victory=:player
+      @victory = :player
     end
   end
 

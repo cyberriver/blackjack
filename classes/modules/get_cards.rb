@@ -48,7 +48,6 @@ module CardsOperations
         key = rand(cards.length)
         @cards << cards[key]
         cards.delete_at(key)
-
       end
     end
   end

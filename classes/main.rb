@@ -1,10 +1,12 @@
-#interface class
+# frozen_string_literal: true
+
+# interface class
 require_relative 'game'
 require_relative './modules/display_methods'
 
 class Main
   include DisplayMethods::InstanceMethods
-  SUIT = ["\u2662", "\u2664", "\u2665", "\u2667"]
+  SUIT = ["\u2662", "\u2664", "\u2665", "\u2667"].freeze
   START = "
   ============начало игры============
   "
@@ -30,37 +32,37 @@ class Main
   3 - Открыть карты
   "
 
-  def initialize ()
-    @name = ""
+  def initialize
+    @name = ''
   end
 
   def begin_game
-    self.show_intro
-    self.start
+    show_intro
+    start
   end
 
   def start
-    self.show_start
-      puts START
-      @game.start_game
-      puts BET
-      @game.game_bet
-      self.show_bet
-      self.show_cards
-      begin
-        @game.check_endgame
-        self.show_move
-        self.show_cards
-        option = gets.chomp.to_i if @game.moves.last==:player
-        @game.make_move(option)
-      rescue StandardError=>error
-        puts error.message
-        retry
-      end
-      self.show_results
-      self.show_victory
-      self.show_cards
-      self.show_ending
+    show_start
+    puts START
+    @game.start_game
+    puts BET
+    @game.game_bet
+    show_bet
+    show_cards
+    begin
+      @game.check_endgame
+      show_move
+      show_cards
+      option = gets.chomp.to_i if @game.moves.last == :player
+      @game.make_move(option)
+    rescue StandardError => e
+      puts e.message
+      retry
+    end
+    show_results
+    show_victory
+    show_cards
+    show_ending
   end
 
   private
@@ -76,29 +78,29 @@ class Main
   def show_ending
     puts MENU_FINAL
     case gets.chomp.to_i
-    when 1 then self.start
-      when 2 then exit
-      else raise 'Вы ввели некорректную команду'
-      end
-   rescue StandardError => err
-     err.message
-     retry
-   end
+    when 1 then start
+    when 2 then exit
+    else raise 'Вы ввели некорректную команду'
+    end
+  rescue StandardError => e
+    e.message
+    retry
+  end
 
-   def show_move
-     print "Ход #{@game.moves.length}"
-     if @game.moves.last == :player
-       puts PLAYER_MOVE
-       puts PLAYER_MENU
-     else
-       puts DEALER_MOVE
-     end
-   end
+  def show_move
+    print "Ход #{@game.moves.length}"
+    if @game.moves.last == :player
+      puts PLAYER_MOVE
+      puts PLAYER_MENU
+    else
+      puts DEALER_MOVE
+    end
+  end
 
-   def show_results
-     puts "На счету:#{@game.player.user_name}:#{@game.player.account} #{@game.dealer.user_name}: #{@game.dealer.account}"
-     puts "Очки #{@game.player.user_name} - #{@game.player.score}"
-     puts END_GAME
-     puts "Очки дилера:#{@game.dealer.score}, Очки игрока:#{@game.player.score} "
-   end
+  def show_results
+    puts "На счету:#{@game.player.user_name}:#{@game.player.account} #{@game.dealer.user_name}: #{@game.dealer.account}"
+    puts "Очки #{@game.player.user_name} - #{@game.player.score}"
+    puts END_GAME
+    puts "Очки дилера:#{@game.dealer.score}, Очки игрока:#{@game.player.score} "
+  end
 end
